@@ -22,7 +22,7 @@ def get_demo_data():
             "date": "2026-10-20",
             "measurements": [
                 {"indicator": "pH", "value": 7.2},
-                {"indicator": "Мутность", "value": 1.8},
+                {"indicator": "Мутность", "value": 2.2},
             ],
         },
         {
