@@ -356,7 +356,8 @@ final class Control {
         }
         Map<String, Standard> byIndicator = new LinkedHashMap<>();
         for (Standard standard : standards) {
-            String name = standard.indicator().name();
+            Indicator indicator = standard.indicator();
+            String name = indicator == null ? null : indicator.name();
             if (name == null || name.isEmpty()) {
                 errors.add("В нормативе не указан показатель.");
                 continue;
@@ -390,7 +391,8 @@ final class Control {
                 continue;
             }
             for (Reading reading : sample.readings()) {
-                String name = reading.indicator().name();
+                Indicator indicator = reading.indicator();
+                String name = indicator == null ? null : indicator.name();
                 if (name == null || name.isEmpty()) {
                     errors.add("В измерении не указан показатель.");
                     continue;
