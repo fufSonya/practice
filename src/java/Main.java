@@ -364,7 +364,17 @@ final class Control {
             if (byIndicator.putIfAbsent(name, standard) != null) {
                 errors.add("Норматив для показателя «" + name + "» указан повторно.");
             }
-            if (standard.minimum() > standard.maximum()) {
+            double minimum = standard.minimum();
+            double maximum = standard.maximum();
+            boolean minimumIsFinite = Double.isFinite(minimum);
+            boolean maximumIsFinite = Double.isFinite(maximum);
+            if (!minimumIsFinite) {
+                errors.add("Минимальное значение для «" + name + "» некорректно.");
+            }
+            if (!maximumIsFinite) {
+                errors.add("Максимальное значение для «" + name + "» некорректно.");
+            }
+            if (minimumIsFinite && maximumIsFinite && minimum > maximum) {
                 errors.add("Минимум больше максимума для «" + name + "».");
             }
         }
@@ -384,6 +394,9 @@ final class Control {
                 if (name == null || name.isEmpty()) {
                     errors.add("В измерении не указан показатель.");
                     continue;
+                }
+                if (!Double.isFinite(reading.value())) {
+                    errors.add("Значение показателя «" + name + "» должно быть конечным числом.");
                 }
                 if (!byIndicator.containsKey(name)) {
                     errors.add("Для показателя «" + name + "» отсутствует норматив.");

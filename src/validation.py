@@ -1,3 +1,11 @@
+from math import isfinite
+
+
+def _is_finite_number(value):
+    # Целые числа Python конечны и не требуют преобразования во float.
+    return isinstance(value, int) or (isinstance(value, float) and isfinite(value))
+
+
 def check_data(control, standards):
     errors = []
 
@@ -31,17 +39,16 @@ def check_data(control, standards):
         minimum = standard.get("min")
         maximum = standard.get("max")
 
-        if not isinstance(minimum, (int, float)):
+        minimum_is_finite = _is_finite_number(minimum)
+        maximum_is_finite = _is_finite_number(maximum)
+
+        if not minimum_is_finite:
             errors.append(f"Минимальное значение для «{indicator}» некорректно.")
 
-        if not isinstance(maximum, (int, float)):
+        if not maximum_is_finite:
             errors.append(f"Максимальное значение для «{indicator}» некорректно.")
 
-        if (
-            isinstance(minimum, (int, float))
-            and isinstance(maximum, (int, float))
-            and minimum > maximum
-        ):
+        if minimum_is_finite and maximum_is_finite and minimum > maximum:
             errors.append(f"Минимум больше максимума для «{indicator}».")
 
     for sample in control["samples"]:
@@ -67,9 +74,9 @@ def check_data(control, standards):
                 errors.append("В измерении не указан показатель.")
                 continue
 
-            if not isinstance(value, (int, float)):
+            if not _is_finite_number(value):
                 errors.append(
-                    f"Значение показателя «{indicator}» должно быть числом."
+                    f"Значение показателя «{indicator}» должно быть конечным числом."
                 )
 
             if indicator not in standards_by_indicator:
